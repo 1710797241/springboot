@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiao.dao.StuDao">
+
+	<resultMap type="Student" id="sdudent_class_asociation">
+		<id column="id" property="id"/>
+		<result column="name" property="name"/>
+		<result column="sex" property="sex"/>
+		<result column="class" property="stuClass"/>
+		<association property="clas" javaType="Class">
+			<id column="id" property="id"/>
+			<result column="className" property="className" />
+		</association>
+	</resultMap>
+	<select id="getAll" resultMap="sdudent_class_asociation">
+		select 
+		stu.id,
+		stu.name,
+		stu.sex,
+		stu.class,
+		cla.className
+		from student stu left join
+		class cla
+		on stu.class = cla.id
+		ORDER BY id
+	</select>
+	
+	<resultMap type="Student" id="sdudent_base">
+		<id column="id" property="id"/>
+		<result column="name" property="name"/>
+		<result column="sex" property="sex"/>
+		<result column="class" property="stuClass"/>
+		
+	</resultMap>
+	<select id="getStudentById" parameterType="integer" resultMap="sdudent_base">
+		select 
+		stu.id,
+		stu.name,
+		stu.sex,
+		stu.class
+		from student stu,class clas
+		where stu.class = clas.id and
+			 stu.id = #{id}
+		
+	</select>
+	<select id="getStudentByName" parameterType="Student" resultMap="sdudent_class_asociation">
+		select 
+		stu.id,
+		stu.name,
+		stu.sex,
+		stu.class,
+		cla.className
+		from student stu,class cla where stu.class = cla.id
+		<if test="name != null and name !=''">
+			and stu.name like "%"#{name}"%"
+		</if>
+		ORDER BY id
+		
+	</select>
+	<update id="modifyById" parameterType="Student" >
+		update student
+		<trim prefix="set" suffixOverrides=",">
+			<if test="name != null">
+				name = #{name},
+				
+			</if>
+			<if test="sex != null">
+				sex = #{sex},
+				
+			</if>
+			<if test="stuClass != null">
+				class= #{stuClass},
+				
+			</if>
+		</trim>
+		<where>
+			<if test="id != null">
+				id = #{id}
+			</if>
+		</where>
+	</update>
+	
+	<delete id="deleteById" parameterType="integer"   >
+		delete from student where id = #{id}
+		
+				
+			
+	</delete>
+	<insert id="addStudent" parameterType="Student">
+		insert into student 
+		(name,sex,class)
+		<trim prefix="values(" suffix=")" suffixOverrides=",">
+			<if test="name !=null">
+				#{name},
+			</if>
+			<if test="sex != null">
+				#{sex},
+			</if>
+			<if test="stuClass != null">
+				#{stuClass},
+			</if>
+		</trim>
+		
+	</insert>
+</mapper>
