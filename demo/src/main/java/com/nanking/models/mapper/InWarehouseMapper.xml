@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nanking.models.dao.InWarehouseDao">
+
+
+    <!-- 分页查询入库信息   -->
+    <select id="selectForPage" parameterType="com.nanking.models.dto.InWareDto" resultType="com.nanking.vo.InWarehouseVo">
+        select
+            inw.in_code inCode,
+            indo.in_type inType,
+            indo.create_time createTime,
+            indo.in_person inPerson,
+            w.warehouse_address warehouseAddress
+
+        from
+         in_warehouse inw
+        inner join
+         in_document indo
+        on inw.delete_status = "no" and inw.in_code = indo.in_code
+        inner join
+         goods g
+        on inw.goods_code = g.goods_code
+        inner join
+            warehouse w
+        on indo.warehouse_code = w.warehouse_code
+            <if test="inCode != null and inCode !=''">
+                and inw.in_code like "%"#{inCode}"%"
+            </if>
+            <if test="inType!= null and inType !=''" >
+                and indo.in_type = #{inType}
+            </if>
+            <if test="goodsName!= null and goodsName !=''" >
+                and g.goods_name = #{goodsName}
+            </if>
+            <if test="goodsCode!= null and goodsCode !=''" >
+                and inw.goods_code like "%"#{goodsCode}"%"
+            </if>
+            <if test="startDate!= null and startDate !='' " >
+                and indo.create_time &gt;= #{startDate}
+            </if>
+            <if test=" endDate!= null and endDate !=''">
+                and indo.create_time &lt;= #{endDate}
+            </if>
+            order by  indo.create_time desc
+
+    </select>
+
+    <select id="selectInWarehouseByInCode" parameterType="java.lang.String" resultType="com.nanking.vo.InWarehouseDetailVo">
+
+        <!--select
+            inw.in_code inCode,
+            inw.batch_number batchNumber,
+            g.goods_code goodsCode,
+            g.goods_name goodsName,
+            g.goods_size goodsSize,
+            g.goods_price goodsPrice,
+            inw.in_number goodsNumber,
+            w.warehouse_name warehouseName
+        from
+            in_warehouse inw,
+            in_document indo,
+            goods g,
+            warehouse w
+        where
+             inw.in_code = #{code}
+        and inw.in_code = indo.in_code
+        and inw.delete_status = "no"
+        and inw.goods_code = g.goods_code
+        and indo.warehouse_code = w.warehouse_code-->
+
+        select
+
+        inw.batch_number batchNumber,
+        g.goods_code goodsCode,
+        g.goods_name goodsName,
+        g.goods_size goodsSize,
+        g.goods_price goodsPrice,
+        inw.in_number goodsNumber,
+        w.warehouse_name warehouseName
+        from
+            in_warehouse inw
+        inner join
+            in_document indo
+        on inw.in_code = #{code} and inw.delete_status = "no" and inw.in_code = indo.in_code
+        inner join
+            goods g
+        on inw.goods_code = g.goods_code
+        inner join
+            warehouse w
+        on indo.warehouse_code = w.warehouse_code
+
+
+
+    </select>
+    <insert id="insertMany" parameterType="com.nanking.models.dto.InWareDto" >
+        insert into in_warehouse
+        (in_code,batch_number,goods_code,in_number,delete_status)
+        values
+        <foreach collection="inWarehouseList" item="inWarehouse"  separator=",">
+            (
+            #{inWarehouse.inCode},
+            #{inWarehouse.batchNumber},
+            #{inWarehouse.goodsCode},
+            #{inWarehouse.inNumber},
+            #{inWarehouse.deleteStatus}
+            )
+        </foreach>
+    </insert>
+</mapper>
+

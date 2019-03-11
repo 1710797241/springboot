@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nanking.models.dao.WarehouseDao">
+
+    <select id="selectAll" resultType="com.nanking.models.domain.Warehouse">
+        select
+
+            warehouse_code warehouseCode,
+            warehouse_name warehouseName,
+            warehouse_address warehouseAddress,
+            warehouse_manager warehouseManager
+        from warehouse
+        where
+        delete_status="no"
+
+    </select>
+    <select id="selectNameAndCode" resultType="com.nanking.vo.WarehouseVo">
+        select
+            warehouse_code warehouseCode,
+            warehouse_name warehouseName
+        from warehouse
+        where
+            delete_status="no"
+    </select>
+    <select id="selectMaxCode" resultType="java.lang.String">
+        select
+            max(warehouse_code)
+        from warehouse
+    </select>
+    <insert id="insertMany" parameterType="com.nanking.models.dto.WarehouseDto" >
+        insert into warehouse
+        (warehouse_code,warehouse_name,warehouse_address,warehouse_manager,delete_status)
+        values
+        <foreach collection="warehouseList" item="warehouse"  separator=",">
+            (
+                #{warehouse.warehouseCode},
+                #{warehouse.warehouseName},
+                #{warehouse.warehouseAddress},
+                #{warehouse.warehouseManager},
+                #{warehouse.deleteStatus}
+
+            )
+        </foreach>
+    </insert>
+
+
+
+    <update id="deleteById" parameterType="java.lang.Integer" >
+        update warehouse
+         set delete_status="yes"
+        where id=#{id}
+    </update>
+</mapper>
+

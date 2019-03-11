@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nanking.models.dao.InDocumentDao">
+    <select id="selectMaxInCode" parameterType="java.lang.String" resultType="java.lang.String">
+        select
+            max(in_code)
+        from in_document
+        where
+            in_code like "%"#{inCodeHead}"%"
+    </select>
+    <insert id="insertInDocument" parameterType="com.nanking.models.dto.InWareDto" >
+        insert into in_document
+        (in_code,in_name,in_type,warehouse_code,create_time,in_person)
+        values
+            (
+            #{inDocument.inCode},
+            #{inDocument.inName},
+            #{inDocument.inType},
+            #{inDocument.warehouseCode},
+            #{inDocument.createTime},
+            #{inDocument.inPerson}
+            )
+
+    </insert>
+</mapper>
+

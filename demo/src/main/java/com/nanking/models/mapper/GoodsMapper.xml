@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nanking.models.dao.GoodsDao">
+
+    <select id="selectByCode" parameterType="java.lang.String" resultType="com.nanking.vo.GoodsVo">
+        select
+            goods_code goodsCode,
+            goods_name goodsName,
+            goods_size goodsSize,
+            goods_price goodsPrice
+        from goods
+            where
+                goods_code = #{code}
+            AND delete_status="no"
+    </select>
+    <select id="selectNameAndCode" resultType="com.nanking.vo.GoodsVo">
+        select
+            goods_code goodsCode,
+            goods_name goodsName
+            from goods
+        where
+        delete_status="no"
+    </select>
+    <select id="selectMaxCode" resultType="java.lang.String">
+        select
+             max(goods_code)
+        from goods
+
+    </select>
+    <insert id="insertMany" parameterType="com.nanking.models.dto.GoodsDto">
+        insert into goods
+        (goods_code,goods_name,goods_size,goods_price,delete_status)
+        values
+        <foreach collection="goodsList" item="goods" separator=",">
+            (
+            #{goods.goodsCode},
+            #{goods.goodsName},
+            #{goods.goodsSize},
+            #{goods.goodsPrice},
+            #{goods.deleteStatus}
+            )
+        </foreach>
+    </insert>
+
+    <update id="deleteById" parameterType="java.lang.Integer" >
+        update goods
+            set delete_status = "yes"
+        where
+            id=#{id}
+    </update>
+</mapper>
+
